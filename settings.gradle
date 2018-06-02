@@ -1,0 +1,3 @@
+include 'uk.ac.lancaster.scc.turtles.clouseau'
+include 'uk.ac.lancaster.scc.turtles.clouseau.ide'
+include 'uk.ac.lancaster.scc.turtles.clouseau.tests'

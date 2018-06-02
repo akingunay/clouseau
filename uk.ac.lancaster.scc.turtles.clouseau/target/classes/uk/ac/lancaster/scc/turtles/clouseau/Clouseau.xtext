@@ -1,0 +1,9 @@
+grammar uk.ac.lancaster.scc.turtles.clouseau.Clouseau with org.eclipse.xtext.common.Terminals
+
+generate clouseau "http://www.ac.uk/lancaster/scc/turtles/clouseau/Clouseau"
+
+Model:
+	greetings+=Greeting*;
+	
+Greeting:
+	'Hello' name=ID '!';
