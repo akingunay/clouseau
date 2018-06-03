@@ -7,5 +7,9 @@ Bundle-SymbolicName: uk.ac.lancaster.scc.turtles.clouseau.ide; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: uk.ac.lancaster.scc.turtles.clouseau,
  org.eclipse.xtext.ide,
- org.eclipse.xtext.xbase.ide
+ org.eclipse.xtext.xbase.ide,
+ org.antlr.runtime
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: uk.ac.lancaster.scc.turtles.clouseau.ide.contentassist.antlr.internal,
+ uk.ac.lancaster.scc.turtles.clouseau.ide.contentassist.antlr
+

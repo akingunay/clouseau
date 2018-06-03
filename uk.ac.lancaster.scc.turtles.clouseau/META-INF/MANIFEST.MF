@@ -7,5 +7,23 @@ Bundle-SymbolicName: uk.ac.lancaster.scc.turtles.clouseau; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
  org.eclipse.xtext.xbase,
- org.eclipse.equinox.common;bundle-version="3.5.0"
+ org.eclipse.equinox.common;bundle-version="3.5.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.xbase.lib,
+ org.antlr.runtime,
+ org.eclipse.xtext.util,
+ org.eclipse.xtend.lib,
+ org.eclipse.emf.common
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: uk.ac.lancaster.scc.turtles.clouseau.scoping,
+ uk.ac.lancaster.scc.turtles.clouseau,
+ uk.ac.lancaster.scc.turtles.clouseau.services,
+ uk.ac.lancaster.scc.turtles.clouseau.clouseau,
+ uk.ac.lancaster.scc.turtles.clouseau.parser.antlr,
+ uk.ac.lancaster.scc.turtles.clouseau.generator,
+ uk.ac.lancaster.scc.turtles.clouseau.clouseau.impl,
+ uk.ac.lancaster.scc.turtles.clouseau.serializer,
+ uk.ac.lancaster.scc.turtles.clouseau.validation,
+ uk.ac.lancaster.scc.turtles.clouseau.parser.antlr.internal,
+ uk.ac.lancaster.scc.turtles.clouseau.clouseau.util
+Import-Package: org.apache.log4j

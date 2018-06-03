@@ -2,8 +2,57 @@ grammar uk.ac.lancaster.scc.turtles.clouseau.Clouseau with org.eclipse.xtext.com
 
 generate clouseau "http://www.ac.uk/lancaster/scc/turtles/clouseau/Clouseau"
 
-Model:
-	greetings+=Greeting*;
-	
-Greeting:
-	'Hello' name=ID '!';
+Spec:
+    name = ID
+    commitments += Commitment*
+    events += Event*
+    controls += Control*
+;
+    
+Commitment:
+    'commitment' name = ID
+     debtor = Role 'to' creditor = Role
+    'create' create = Expression
+    'detach' detach = Expression
+    'discharge' discharge = Expression
+;
+
+Expression:
+	OrExpression
+;
+    
+OrExpression returns Expression:
+	AndExpression ({OrExpression.left = current} 'or' right = AndExpression)*
+;
+
+AndExpression returns Expression:
+	AtomicExpression ({AndExpression.left = current} 'and' right = AtomicExpression)*
+;
+    
+AtomicExpression returns Expression:
+	'(' Expression ')' | EventLabel
+;
+
+EventLabel returns Expression:
+	{EventLabel} label = [Event]
+;
+
+Event:
+    name = ID
+    '(' attributes += Attribute (',' attributes += Attribute)* ')'
+    'key' keys += [Attribute] (',' keys += [Attribute])*
+    'time' time = Attribute
+;
+
+Control:
+    role = Role 'controls' '{' events += [Event] (',' events += [Event])* '}' ':' '{'attributes += Attribute (',' attributes += Attribute)* '}'
+;
+
+Role:
+    name = ID
+;
+
+Attribute:
+    name = ID
+;
+
