@@ -3,27 +3,17 @@
  */
 package uk.ac.lancaster.scc.turtles.clouseau.tests
 
-import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.XtextRunner
-import org.eclipse.xtext.testing.util.ParseHelper
-import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.Spec
 
 @RunWith(XtextRunner)
 @InjectWith(ClouseauInjectorProvider)
 class ClouseauParsingTest {
-	@Inject
-	ParseHelper<Spec> parseHelper
 	
 	@Test
 	def void loadModel() {
-		val result = parseHelper.parse('''
-			Hello Xtext!
-		''')
-		Assert.assertNotNull(result)
-		Assert.assertTrue(result.eResource.errors.isEmpty)
+
 	}
 }
