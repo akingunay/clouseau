@@ -2,57 +2,70 @@ grammar uk.ac.lancaster.scc.turtles.clouseau.Clouseau with org.eclipse.xtext.com
 
 generate clouseau "http://www.ac.uk/lancaster/scc/turtles/clouseau/Clouseau"
 
-Spec:
+CLOSpecification:
     name = ID
-    commitments += Commitment*
-    events += Event*
-    controls += Control*
+    commitments += CLOCommitment*
+    events += CLOEvent*
+    controls += CLOControl*
 ;
     
-Commitment:
+CLOCommitment:
     'commitment' name = ID
-     debtor = Role 'to' creditor = Role
-    'create' create = Expression
-    'detach' detach = Expression
-    'discharge' discharge = Expression
+     debtor = ID 'to' creditor = ID
+    'create' create = CLOExpression
+    'detach' detach = CLOExpression
+    'discharge' discharge = CLOExpression
 ;
 
-Expression:
-	OrExpression
+CLOExpression:
+    CLOOrExpression
+;
+
+// left associativity    
+CLOOrExpression returns CLOExpression:
+    CLOAndExpression ({CLOOrExpression.left = current} 'or' right = CLOAndExpression)*
+;
+
+// left associativity
+CLOAndExpression returns CLOExpression:
+    AtomicExpression ({CLOAndExpression.left = current} 'and' right = AtomicExpression)*
 ;
     
-OrExpression returns Expression:
-	AndExpression ({OrExpression.left = current} 'or' right = AndExpression)*
+AtomicExpression returns CLOExpression:
+    '(' CLOExpression ')' | CLOBaseEvent | CLOLifecycleEvent
 ;
 
-AndExpression returns Expression:
-	AtomicExpression ({AndExpression.left = current} 'and' right = AtomicExpression)*
-;
-    
-AtomicExpression returns Expression:
-	'(' Expression ')' | EventLabel
+CLOBaseEvent returns CLOExpression:
+    {CLOBaseEvent} event = [CLOEvent]
 ;
 
-EventLabel returns Expression:
-	{EventLabel} label = [Event]
+CLOLifecycleEvent returns CLOExpression:
+	CLOCreated | CLODetached | CLODischarged
 ;
 
-Event:
+CLOCreated returns CLOExpression:
+    'created' {CLOCreated} commitment = [CLOCommitment]
+;
+
+CLODetached returns CLOExpression:
+    'detached' {CLODetached} commitment = [CLOCommitment]
+;
+
+CLODischarged returns CLOExpression:
+    'discharged' {CLODischarged} commitment = [CLOCommitment]
+;
+
+CLOEvent:
     name = ID
-    '(' attributes += Attribute (',' attributes += Attribute)* ')'
-    'key' keys += [Attribute] (',' keys += [Attribute])*
-    'time' time = Attribute
+    '(' attributes += ID (',' attributes += ID)* ')'
+    'key' keys += ID (',' keys += ID)*
+    'time' time = ID
 ;
 
-Control:
-    role = Role 'controls' '{' events += [Event] (',' events += [Event])* '}' ':' '{'attributes += Attribute (',' attributes += Attribute)* '}'
+CLOControl:
+    role = ID 'controls' eventControls += CLOEventControl+
 ;
 
-Role:
-    name = ID
+CLOEventControl:
+    event = [CLOEvent] 'with' attributes += ID (',' attributes += ID)*
 ;
-
-Attribute:
-    name = ID
-;
-

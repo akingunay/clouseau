@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOSpecification
 
 /**
  * Generates code from your model files on save.
@@ -16,7 +17,15 @@ import org.eclipse.xtext.generator.IGeneratorContext
 class ClouseauGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-		val spec = new Specification(resource)
-		fsa.generateFile(resource.URI.lastSegment.split("\\.").get(0) + ".bspl", spec.compileProtocol)
+		val name = resource.allContents.toIterable.filter(CLOSpecification).head.name
+		val commitmentExtractor = new CommitmentExtractor(resource)
+		val eventExtractor = new EventExtractor(resource)
+		val controlExtractor = new ControlExtractor(resource)
+		val specification = new Specification(name, commitmentExtractor.extract, eventExtractor.extract, controlExtractor.extract)
+		System.out.println(specification)
+		val compiler = new ClouseauToBSPLCompiler(specification)
+		val protocol = compiler.compile
+		val printer = new ProtocolPrinter(protocol)
+		fsa.generateFile(resource.URI.lastSegment.split("\\.").get(0) + ".bspl", printer.toCharSequence)
 	}
 }
