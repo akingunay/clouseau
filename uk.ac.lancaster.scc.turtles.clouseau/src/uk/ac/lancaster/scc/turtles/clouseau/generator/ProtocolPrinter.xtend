@@ -38,5 +38,6 @@ package class ProtocolPrinter {
 		
 		«ENDFOR»
 		'''
-}
+	}
+	
 }

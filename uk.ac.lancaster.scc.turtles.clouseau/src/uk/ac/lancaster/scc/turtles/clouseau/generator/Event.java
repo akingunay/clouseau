@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -15,17 +16,23 @@ class Event {
 
     private final String name;
     private final Set<String> attributes;
+    private final Set<String> nillables;
     private final Set<String> keys;
-    
     /**
      * 
      * @param name
-     * @param parameters
+     * @param attributes
      * @param keys
      */
-    Event(final String name, final Set<String> parameters, final Set<String> keys) {
+    Event(final String name, final Set<Attribute> attributes, final Set<String> keys) {
 		this.name = name;
-		this.attributes = new HashSet<>(parameters);
+		this.attributes = new HashSet<String>(attributes.stream().
+				map(a -> a.getName()).
+				collect(Collectors.toSet()));
+		this.nillables = new HashSet<String>(attributes.stream().
+				filter(a -> a.isNillable()).
+				map(a -> a.getName()).
+				collect(Collectors.toSet()));
 		this.keys = new HashSet<>(keys);
 	}
 
@@ -79,11 +86,11 @@ class Event {
 	
 	/**
 	 * 
-	 * @param parameter
+	 * @param attribute
 	 * @return
 	 */
-	boolean isAttribute(final String parameter) {
-        return attributes.contains(parameter);
+	boolean isAttribute(final String attribute) {
+        return attributes.contains(attribute);
     }
     
 	/**
@@ -95,12 +102,16 @@ class Event {
         return keys.contains(key);
     }
     
+    boolean isNillable(final String attribute) {
+    	return nillables.contains(attribute);
+    }
+    
     @Override
     public String toString() {
     	StringBuilder str = new StringBuilder("<Event>");
-    	str.append("\n\tname : ").append(name).append("\n\tparameters : {");
-    	for (String parameter : attributes) {
-    		str.append(parameter).append(", ");
+    	str.append("\n\tname : ").append(name).append("\n\tattributes : {");
+    	for (String attribute : attributes) {
+    		str.append(attribute).append(", ");
     	}
     	str.replace(str.length() - ", ".length(), str.length(), "}").append("\n\tkeys : {");
     	for (String key : keys) {

@@ -32,6 +32,9 @@ class MessageCompiler {
 							if (!isIntersectionEmpty(specification.getDeterminant(attribute), message.getInParameters())) {
 								extendedMessagesByRole.add(adornParameterIn(attribute, message));
 							}
+							if (specification.getEventWithName(eventName).isNillable(attribute)) {
+								extendedMessagesByRole.add(adornParameterNil(attribute, message));
+							}
 						} else {
 								extendedMessagesByRole.add(adornParameterIn(attribute, message));
 						}
@@ -39,6 +42,9 @@ class MessageCompiler {
 						if (!specification.getEventWithName(eventName).isKey(attribute)) {
 							if (!isIntersectionEmpty(specification.getDeterminant(attribute), message.getInParameters())) {
 								extendedMessagesByRole.add(adornParameterIn(attribute, message));
+							}
+							if (specification.getEventWithName(eventName).isNillable(attribute)) {
+								extendedMessagesByRole.add(adornParameterNil(attribute, message));
 							}
 						} else {
 								extendedMessagesByRole.add(adornParameterIn(attribute, message));
@@ -86,20 +92,12 @@ class MessageCompiler {
 				message.getInParameters(), outParameters, message.getNilParameters(), unknownParameters);
 	}
 
-	// private Message adornParameterNil(String parameter, Message message) {
-	// Set<String> nilParameters = new HashSet<>(message.getNilParameters());
-	// nilParameters.add(parameter);
-	// Set<String> unknownParameters = new
-	// HashSet<>(message.getUnknownParameters());
-	// unknownParameters.remove(parameter);
-	// return new Message(
-	// message.getName(),
-	// message.getSender(),
-	// message.getReceiver(),
-	// message.getKeyParameters(),
-	// message.getInParameters(),
-	// message.getOutParameters(),
-	// nilParameters,
-	// unknownParameters);
-	// }
+	private Message adornParameterNil(String parameter, Message message) {
+		Set<String> nilParameters = new HashSet<>(message.getNilParameters());
+		nilParameters.add(parameter);
+		Set<String> unknownParameters = new HashSet<>(message.getUnknownParameters());
+		unknownParameters.remove(parameter);
+		return new Message(message.getName(), message.getSender(), message.getReceiver(), message.getKeyParameters(),
+				message.getInParameters(), message.getOutParameters(), nilParameters, unknownParameters);
+	 }
 }

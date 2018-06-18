@@ -6,6 +6,9 @@ import java.util.HashSet
 import uk.ac.lancaster.scc.turtles.clouseau.clouseau.ClouseauPackage
 import org.eclipse.xtext.validation.AbstractDeclarativeValidator
 import org.eclipse.xtext.validation.EValidatorRegistrar
+import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOAttribute
+
+// TODO keys are not nillable
 
 class EventValidator extends AbstractDeclarativeValidator {
 	
@@ -16,7 +19,7 @@ class EventValidator extends AbstractDeclarativeValidator {
 	def checkDuplicateEventAttributes(CLOEvent event) {
 		var index = 0
 		val attributes = new HashSet
-		for (attribute : event.attributes) {
+		for (attribute : event.attributes.map[CLOAttribute a | a.name]) {
 			if (attributes.contains(attribute)) {
 				error("Attribute '" + attribute + "' is already defined for event '" + event.name + "'.", ClouseauPackage.eINSTANCE.CLOEvent_Attributes, index)
 				return
@@ -44,7 +47,8 @@ class EventValidator extends AbstractDeclarativeValidator {
 	def checkEventKeys(CLOEvent event) {
 		var index = 0
 		for (key : event.keys) {
-			if (!event.attributes.contains(key)) {
+			// TODO avoid the following repetitive mapping
+			if (!event.attributes.map[CLOAttribute a | a.name].contains(key)) {
 				error("Declared key '" + key + "' of event '" + event.name + "' is not an attribute of the event.", ClouseauPackage.eINSTANCE.CLOEvent_Keys, index)
 				return
 			}

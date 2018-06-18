@@ -57,7 +57,7 @@ CLODischarged returns CLOExpression:
 
 CLOEvent:
     name = ID
-    '(' attributes += ID (',' attributes += ID)* ')'
+    '(' attributes += CLOAttribute  (',' attributes += CLOAttribute)* ')'
     'key' keys += ID (',' keys += ID)*
     'time' time = ID
 ;
@@ -68,4 +68,8 @@ CLOControl:
 
 CLOEventControl:
     event = [CLOEvent] 'with' attributes += ID (',' attributes += ID)*
+;
+
+CLOAttribute:
+	name = ID nillable?= ('nillable')?
 ;
