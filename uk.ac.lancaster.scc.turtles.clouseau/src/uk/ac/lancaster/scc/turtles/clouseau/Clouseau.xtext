@@ -11,41 +11,37 @@ CLOSpecification:
     
 CLOCommitment:
     'commitment' name = ID
-	debtor = ID 'to' creditor = ID
-    create = CLOCreate
-    (detach = CLODetach)?
-    discharge = CLODischarge
-;
-
-CLOCreate:
-	'create' expression = CLOExpression ('except' except = CLOExpression)?
-;
-
-CLODetach:
-	'detach' expression = CLOExpression ('except' except = CLOExpression)?
-;
-
-CLODischarge:
-	'discharge' expression = CLOExpression ('except' except = CLOExpression)?
+     debtor = ID 'to' creditor = ID
+    'create' create = CLOExpression
+    'detach' detach = CLOExpression
+    'discharge' discharge = CLOExpression
 ;
 
 CLOExpression:
     CLOOrExpression
 ;
 
-// left associative    
+// left associativity    
 CLOOrExpression returns CLOExpression:
     CLOAndExpression ({CLOOrExpression.left = current} 'or' right = CLOAndExpression)*
 ;
 
-// left associative
+// left associativity
 CLOAndExpression returns CLOExpression:
-    CLOAtomicExpression ({CLOAndExpression.left = current} 'and' right = CLOAtomicExpression)*
+    CLOExceptExpression ({CLOAndExpression.left = current} 'and' right = CLOExceptExpression)*
+;
+
+CLOExceptExpression returns CLOExpression:
+	CLOPrimary ({CLOExceptExpression.left = current} 'except' right = CLOPrimary)*
 ;
     
-CLOAtomicExpression returns CLOExpression:
+CLOPrimary returns CLOExpression:
     '(' CLOExpression ')' | CLOBaseEvent | CLOLifecycleEvent
 ;
+
+//CLOAtomic returns CLOExpression:
+//	CLOBaseEvent | CLOLifecycleEvent
+//;
 
 CLOBaseEvent returns CLOExpression:
     {CLOBaseEvent} event = [CLOEvent]

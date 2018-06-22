@@ -27,9 +27,9 @@ package class CommitmentExtractor {
 				c.name,
 				c.debtor,
 				c.creditor,
-				new DNF(resolveNesting(c.create.expression)), 
-				new DNF(resolveNesting(c.detach.expression)),
-				new DNF(resolveNesting(c.discharge.expression))
+				new DNF(resolveNesting(c.create)), 
+				new DNF(resolveNesting(c.detach)),
+				new DNF(resolveNesting(c.discharge))
 				)
 			].forEach[Commitment c | commitments.add(c)]
 		commitments

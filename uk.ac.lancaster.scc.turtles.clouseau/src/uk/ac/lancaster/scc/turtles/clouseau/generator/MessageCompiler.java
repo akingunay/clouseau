@@ -21,12 +21,9 @@ class MessageCompiler {
 				Set<Message> extendedMessagesByRole = new HashSet<>();
 				for (Message message : messagesByRole) {
 					if (enactment.getBoundParameters(controllerRole).contains(attribute)) {
-						// TODO we should check that no determinant key is out
+						// TODO should we check that no determinant key is out
 						extendedMessagesByRole.add(adornParameterIn(attribute, message));
 					} else if (specification.isAttributeControlledByRoleForEvent(attribute, controllerRole, eventName)) {
-						// if (specification.isNillable(attribute, eventName)) {
-						// // create the polymorph where attribute is adorned nil
-						// }
 						extendedMessagesByRole.add(adornParameterOut(attribute, message));
 						if (!specification.getEventWithName(eventName).isKey(attribute)) {
 							if (!isIntersectionEmpty(specification.getDeterminant(attribute), message.getInParameters())) {
@@ -49,9 +46,6 @@ class MessageCompiler {
 						} else {
 								extendedMessagesByRole.add(adornParameterIn(attribute, message));
 						}
-						// the attribute is not bound and not controlled by the sender
-						// if it is nillable include one in and one nil polymorph
-						// otherwise include only an in polymorph
 					}
 				}
 				messagesByRole = extendedMessagesByRole;

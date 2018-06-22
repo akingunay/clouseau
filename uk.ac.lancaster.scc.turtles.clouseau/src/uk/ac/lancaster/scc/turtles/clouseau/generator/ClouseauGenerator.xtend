@@ -10,9 +10,8 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOSpecification
 
 /**
- * Generates code from your model files on save.
+ * Generates code from model files on save.
  * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
 class ClouseauGenerator extends AbstractGenerator {
 
@@ -22,9 +21,10 @@ class ClouseauGenerator extends AbstractGenerator {
 		val eventExtractor = new EventExtractor(resource)
 		val controlExtractor = new ControlExtractor(resource)
 		val specification = new Specification(name, commitmentExtractor.extract, eventExtractor.extract, controlExtractor.extract)
-		System.out.println(specification)
+		
 		val compiler = new ClouseauToBSPLCompiler(specification)
 		val protocol = compiler.compile
+		
 		val printer = new ProtocolPrinter(protocol)
 		fsa.generateFile(resource.URI.lastSegment.split("\\.").get(0) + ".bspl", printer.toCharSequence)
 	}
