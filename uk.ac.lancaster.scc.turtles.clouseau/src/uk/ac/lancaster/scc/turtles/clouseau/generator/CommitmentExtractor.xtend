@@ -27,9 +27,9 @@ package class CommitmentExtractor {
 				c.name,
 				c.debtor,
 				c.creditor,
-				new DNF(resolveNesting(c.create.expression)), 
-				new DNF(resolveNesting(c.detach.expression)),
-				new DNF(resolveNesting(c.discharge.expression))
+				new DNF(resolveNesting(c.create)), 
+				new DNF(resolveNesting(c.detach)),
+				new DNF(resolveNesting(c.discharge))
 				)
 			].forEach[Commitment c | commitments.add(c)]
 		commitments
@@ -41,9 +41,14 @@ package class CommitmentExtractor {
 		} else if (expression instanceof CLOCreated) {
 			resolveNesting(findRefferedExpression((expression as CLOCreated).commitment.name, [CLOCommitment c | c.create]))
 		} else if (expression instanceof CLODetached) {
-			resolveNesting(findRefferedExpression((expression as CLODetached).commitment.name, [CLOCommitment c | c.detach]))
+			val create = resolveNesting(findRefferedExpression((expression as CLODetached).commitment.name, [CLOCommitment c | c.create]))
+			val detach  = resolveNesting(findRefferedExpression((expression as CLODetached).commitment.name, [CLOCommitment c | c.detach]))
+			new AndExpression(create, detach)
 		} else if (expression instanceof CLODischarged) {
-			resolveNesting(findRefferedExpression((expression as CLODischarged).commitment.name, [CLOCommitment c | c.discharge]))
+			val create = resolveNesting(findRefferedExpression((expression as CLODischarged).commitment.name, [CLOCommitment c | c.create]))
+			val detach  = resolveNesting(findRefferedExpression((expression as CLODischarged).commitment.name, [CLOCommitment c | c.detach]))
+			val discharge = resolveNesting(findRefferedExpression((expression as CLODischarged).commitment.name, [CLOCommitment c | c.discharge]))
+			new OrExpression(new AndExpression(create, discharge), new AndExpression(detach, discharge))
 		} else if (expression instanceof CLOOrExpression) {
 			val orExpression = (expression as CLOOrExpression) 
 			new OrExpression(resolveNesting(orExpression.left), resolveNesting(orExpression.right))
@@ -51,7 +56,7 @@ package class CommitmentExtractor {
 			val andExpression = (expression as CLOAndExpression)
 			new AndExpression(resolveNesting(andExpression.left), resolveNesting(andExpression.right))
 		} else {
-			null
+			new BaseEvent("")
 		}
 	}
 	
