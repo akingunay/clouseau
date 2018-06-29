@@ -23,7 +23,13 @@ class MessageCompiler {
 					if (enactment.getBoundParameters(controllerRole).contains(attribute)) {
 						// TODO should we check that no determinant key is out
 						extendedMessagesByRole.add(adornParameterIn(attribute, message));
-					} else if (specification.isAttributeControlledByRoleForEvent(attribute, controllerRole, eventName)) {
+					} 
+					// NEW BEGIN
+					else if (enactment.getExceptParameters().contains(attribute)) {
+						extendedMessagesByRole.add(adornParameterNil(attribute, message));
+					}
+					// NEW END
+					else if (specification.isAttributeControlledByRoleForEvent(attribute, controllerRole, eventName)) {
 						extendedMessagesByRole.add(adornParameterOut(attribute, message));
 						if (!specification.getEventWithName(eventName).isKey(attribute)) {
 							if (!isIntersectionEmpty(specification.getDeterminant(attribute), message.getInParameters())) {

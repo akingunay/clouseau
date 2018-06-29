@@ -1,5 +1,12 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
+/**
+ * Represents an attribute of an event. The attribute can
+ * be set as nillable.  This is an immutable class.
+ * 
+ * @author Akin Gunay
+ *
+ */
 class Attribute {
 
 	private final String name;

@@ -17,9 +17,10 @@ class ClouseauGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		val name = resource.allContents.toIterable.filter(CLOSpecification).head.name
-		val commitmentExtractor = new CommitmentExtractor(resource)
+		val commitmentExtractor = new CommitmentExtractor(resource, new BottomUpNestedExpressionResolver(resource), new TopDownExceptExpressionSimplifer)
 		val eventExtractor = new EventExtractor(resource)
 		val controlExtractor = new ControlExtractor(resource)
+	
 		val specification = new Specification(name, commitmentExtractor.extract, eventExtractor.extract, controlExtractor.extract)
 		
 		val compiler = new ClouseauToBSPLCompiler(specification)

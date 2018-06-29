@@ -14,9 +14,9 @@ class Commitment {
 	private final String name;
 	private final String debtor;
 	private final String creditor;
-	private final DNF create;
-	private final DNF detach;
-	private final DNF discharge;
+	private final Expression create;
+	private final Expression detach;
+	private final Expression discharge;
 	
 	private final Set<String> roles;
 	
@@ -29,7 +29,7 @@ class Commitment {
 	 * @param detach
 	 * @param discharge
 	 */
-	Commitment(final String name, final String debtor, final String creditor, final DNF create, final DNF detach, final DNF discharge) {
+	Commitment(final String name, final String debtor, final String creditor, final Expression create, final Expression detach, final Expression discharge) {
 		super();
 		this.name = name;
 		this.debtor = debtor;
@@ -78,7 +78,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	DNF getCreate() {
+	Expression getCreate() {
 		return create;
 	}
 
@@ -86,7 +86,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	DNF getDetach() {
+	Expression getDetach() {
 		return detach;
 	}
 
@@ -94,7 +94,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	DNF getDischarge() {
+	Expression getDischarge() {
 		return discharge;
 	}
 	
