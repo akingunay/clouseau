@@ -28,12 +28,20 @@ CLOOrExpression returns CLOExpression:
 
 // left associativity
 CLOAndExpression returns CLOExpression:
-    AtomicExpression ({CLOAndExpression.left = current} 'and' right = AtomicExpression)*
+    CLOExceptExpression ({CLOAndExpression.left = current} 'and' right = CLOExceptExpression)*
+;
+
+CLOExceptExpression returns CLOExpression:
+	CLOPrimary ({CLOExceptExpression.left = current} 'except' right = CLOPrimary)*
 ;
     
-AtomicExpression returns CLOExpression:
+CLOPrimary returns CLOExpression:
     '(' CLOExpression ')' | CLOBaseEvent | CLOLifecycleEvent
 ;
+
+//CLOAtomic returns CLOExpression:
+//	CLOBaseEvent | CLOLifecycleEvent
+//;
 
 CLOBaseEvent returns CLOExpression:
     {CLOBaseEvent} event = [CLOEvent]
