@@ -1,7 +1,9 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -96,6 +98,14 @@ class Commitment {
 	 */
 	Expression getDischarge() {
 		return discharge;
+	}
+	
+	List<String> getIncludedEventNames() {
+		Set<String> includedEventNames = new HashSet<>();
+		includedEventNames.addAll(create.getIncludedEventNames());
+		includedEventNames.addAll(detach.getIncludedEventNames());
+		includedEventNames.addAll(discharge.getIncludedEventNames());
+		return new ArrayList<>(includedEventNames);
 	}
 	
 	@Override

@@ -1,6 +1,8 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 class ExceptExpression implements BinaryExpression {
@@ -50,6 +52,14 @@ class ExceptExpression implements BinaryExpression {
 			}
 		}
 		return satisfyingEventConfigurations;
+	}
+	
+	@Override
+	public List<String> getIncludedEventNames() {
+		Set<String> includedEventNames = new HashSet<>();
+		includedEventNames.addAll(left.getIncludedEventNames());
+		includedEventNames.addAll(right.getIncludedEventNames());
+		return new ArrayList<>(includedEventNames);
 	}
 	
 	@Override

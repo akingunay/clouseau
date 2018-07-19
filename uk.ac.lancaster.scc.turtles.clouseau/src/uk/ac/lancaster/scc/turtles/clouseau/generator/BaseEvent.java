@@ -1,6 +1,8 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -31,6 +33,13 @@ class BaseEvent implements Expression {
 		return satisfyingEventConfigurations;
 	}
 	
+	@Override
+	public List<String> getIncludedEventNames() {
+		List<String> includedEventNames = new ArrayList<>();
+		includedEventNames.add(eventName);
+		return includedEventNames;
+	}
+
 	@Override
 	public String toString() {
 		return eventName;

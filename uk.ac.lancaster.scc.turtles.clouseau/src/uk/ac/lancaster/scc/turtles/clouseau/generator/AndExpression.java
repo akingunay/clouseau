@@ -1,18 +1,20 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Represents a binary 'and' expression. The expression is modelled
  * as the root of a binary tree where left and right children are
- * also expressions.  This is an immutable effectively immutable class.
+ * also expressions.  This is an effectively immutable class.
  * 
  * 
  * @author Akin Gunay
  *
  */
-class AndExpression implements BinaryExpression {
+public class AndExpression implements BinaryExpression {
 	
 	private final Expression left;
 	private final Expression right;
@@ -45,6 +47,14 @@ class AndExpression implements BinaryExpression {
 		return satisfyingEventConfigurations;
 	}
 	
+	@Override
+	public List<String> getIncludedEventNames() {
+		Set<String> includedEventNames = new HashSet<>();
+		includedEventNames.addAll(left.getIncludedEventNames());
+		includedEventNames.addAll(right.getIncludedEventNames());
+		return new ArrayList<>(includedEventNames);
+	}
+
 	@Override
 	public String toString() {
 		return "(" + left + " and " + right + ")";

@@ -26,7 +26,12 @@ class MessageCompiler {
 					} 
 					// NEW BEGIN
 					else if (enactment.getExceptParameters().contains(attribute)) {
-						extendedMessagesByRole.add(adornParameterNil(attribute, message));
+						if (specification.getEventWithName(eventName).isNillable(attribute)) {
+							extendedMessagesByRole.add(adornParameterNil(attribute, message));
+						} else {
+							// FIXME model error, this attribute must be nillable
+						}
+						// FIXME if the attribute is controlled by the sender, we should issue a warning
 					}
 					// NEW END
 					else if (specification.isAttributeControlledByRoleForEvent(attribute, controllerRole, eventName)) {

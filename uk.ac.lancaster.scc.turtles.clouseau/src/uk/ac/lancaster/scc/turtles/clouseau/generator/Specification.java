@@ -22,6 +22,7 @@ class Specification {
     private final Map<String, Set<Control>> eventNameToControls;
     private final Map<String, Set<String>> eventNameToControllerRoles;
     private final Map<String, Set<String>> attributeToDeterminant;		// the keys that determine this attribute
+    private final Map<String, List<String>> eventNameToCommitmentNames; // the commitments that include the event
     
     Specification(final String name, final List<Commitment> commitments, final List<Event> events, final List<Control> controls) {
         this.name = name;
@@ -33,6 +34,7 @@ class Specification {
         this.eventNameToControls = indexEventNameToControls();
         this.eventNameToControllerRoles = indexEventNameToControllerRoles();
         this.attributeToDeterminant = extractAttributeToDeterminant();
+        this.eventNameToCommitmentNames = indexEventNameToCommitmentNames();
     }
 
     private Set<String> extractRoles() {
@@ -92,6 +94,19 @@ class Specification {
     	return extractedAttributeToDeterminant;
     }
     
+    private Map<String, List<String>> indexEventNameToCommitmentNames() {
+    	Map<String, List<String>> index = new HashMap<>();
+    	for (Commitment commitment : commitments) {
+    		for (String eventName : commitment.getIncludedEventNames()) {
+    			if (!index.containsKey(eventName)) {
+    				index.put(eventName, new ArrayList<>());
+    			}
+    			index.get(eventName).add(commitment.getName());
+    		}
+    	}
+    	return index;
+    }
+    
     String getName() {
     	return name;
     }
@@ -133,6 +148,24 @@ class Specification {
     		}
     	}
     	return false;
+    }
+    
+    /**
+     * Get the list of commitment names that involve the given event in their create, detach, or discharge expressions.
+     * 
+     * @param eventName
+     * @return
+     */
+    List<String> getCommitmentNames(String eventName) {
+    	return Collections.unmodifiableList(eventNameToCommitmentNames.get(eventName));
+    }
+    
+    List<String> getEventNames() {
+    	List<String> eventNames = new ArrayList<>();
+    	for (Event event : events) {
+    		eventNames.add(event.getName());
+    	}
+    	return eventNames;
     }
     
     @Override

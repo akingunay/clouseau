@@ -2,16 +2,8 @@ package uk.ac.lancaster.scc.turtles.clouseau.generator
 
 import org.eclipse.emf.ecore.resource.Resource
 import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOCommitment
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOExpression
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOBaseEvent
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOCreated
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLODetached
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLODischarged
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOOrExpression
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOAndExpression
 import java.util.ArrayList
 import java.util.List
-import uk.ac.lancaster.scc.turtles.clouseau.clouseau.CLOExceptExpression
 
 package class CommitmentExtractor {
 	

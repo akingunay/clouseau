@@ -24,8 +24,11 @@ class ClouseauGenerator extends AbstractGenerator {
 		val specification = new Specification(name, commitmentExtractor.extract, eventExtractor.extract, controlExtractor.extract)
 		
 		val compiler = new ClouseauToBSPLCompiler(specification)
-		val protocol = compiler.compile
-		
+ 		//val protocol = compiler.compile
+		val intermediary = compiler.compileIntermediaryProtocol
+		val intermediaryPrinter = new IntermediaryProtocolPrinter(intermediary)
+		fsa.generateFile(resource.URI.lastSegment.split("\\.").get(0) + ".bsplI", intermediaryPrinter.toCharSequence)
+		val protocol = compiler.linkIntermediaryProtocol(intermediary)
 		val printer = new ProtocolPrinter(protocol)
 		fsa.generateFile(resource.URI.lastSegment.split("\\.").get(0) + ".bspl", printer.toCharSequence)
 	}

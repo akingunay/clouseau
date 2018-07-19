@@ -1,16 +1,16 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator
 
-package class ProtocolPrinter {
+package class IntermediaryProtocolPrinter {
 	
-	Protocol protocol
+	IntermediaryProtocol protocol
 	
-	new(Protocol protocol) {
+	new(IntermediaryProtocol protocol) {
 		this.protocol = protocol
 	}
 	
 	package def toCharSequence() {
 		'''
-		«protocol.name» {
+		«protocol.getName» {
 		
 			«roles()»
 		
@@ -23,7 +23,7 @@ package class ProtocolPrinter {
 	
 	private def roles() {
 		'''role ''' +
-        '''«FOR role : protocol.roles SEPARATOR ', '»«role»«ENDFOR»'''
+        '''«FOR role : protocol.getRoles SEPARATOR ', '»«role»«ENDFOR»'''
 	}
 	
 	private def parameters() {

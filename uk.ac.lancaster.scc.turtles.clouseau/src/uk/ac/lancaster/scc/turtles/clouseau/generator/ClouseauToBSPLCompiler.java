@@ -1,6 +1,7 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 class ClouseauToBSPLCompiler {
@@ -14,13 +15,13 @@ class ClouseauToBSPLCompiler {
 	}
 
 	Protocol compile() {
-		Protocol intermediaryProtocol = compileIntermediaryProtocol();
+		IntermediaryProtocol intermediaryProtocol = compileIntermediaryProtocol();
 		Protocol finalProtocol = linkIntermediaryProtocol(intermediaryProtocol);
 		return finalProtocol;
 	}
-
-	Protocol compileIntermediaryProtocol() {
-		Protocol protocol = new Protocol(specification.getName(), specification.getRoles());
+	
+	IntermediaryProtocol compileIntermediaryProtocol() {
+		IntermediaryProtocol protocol = new IntermediaryProtocol(specification.getName(), specification.getRoles());
 		for (Commitment commitment : specification.getCommitments()) {
 			Set<Enactment> enactments = new HashSet<>();
 			// add an empty enactment to indicate that for each commitment initially
@@ -96,7 +97,21 @@ class ClouseauToBSPLCompiler {
 		return exceptParameters;
 	}
 
-	private Protocol linkIntermediaryProtocol(Protocol protocol) {
+	Protocol linkIntermediaryProtocol(IntermediaryProtocol intermediaryProtocol) {
+		Protocol protocol = new Protocol(intermediaryProtocol.getName());
+		for (String role : intermediaryProtocol.getRoles()) {
+			protocol.addRole(role);
+		}
+		for (String eventName : specification.getEventNames()) {
+			List<String> commitmentNames = specification.getCommitmentNames(eventName);
+			Set<Message> messages = new HashSet<>(intermediaryProtocol.getMessages(eventName, commitmentNames.get(0)));
+			if (1 < commitmentNames.size()) { 
+				for (int i = 1 ; i < commitmentNames.size() ; i++) {
+					messages.retainAll(intermediaryProtocol.getMessages(eventName, commitmentNames.get(i)));
+				}
+			}
+			protocol.addMessages(messages);
+		}
 		return protocol;
 	}
 
