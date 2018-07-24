@@ -16,6 +16,7 @@ class MessageCompiler {
 		Set<Message> messages = new HashSet<>();
 		for (String controllerRole : specification.getControllerRoles(eventName)) {
 			Set<Message> messagesByRole = new HashSet<>();
+			// TODO the following constructor of Message is deprecated
 			messagesByRole.add(new Message(specification.getEventWithName(eventName), controllerRole, controllerRole.equals(defaultSender) ? defaultReceiver : "?"));
 			for (String attribute : specification.getEventWithName(eventName).getAttributesWithKeysFirst()) {
 				Set<Message> extendedMessagesByRole = new HashSet<>();

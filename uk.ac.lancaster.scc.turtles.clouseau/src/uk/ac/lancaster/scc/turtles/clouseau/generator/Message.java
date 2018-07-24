@@ -53,6 +53,7 @@ class Message {
 		this.unknownParameters = new HashSet<>(unknownParameters);
 	}
 	
+	// TODO deprecate this constructor, use of "M" is not a good design
 	Message(Event event, String sender, String receiver) {
 		this.name = event.getName() + "M";
 		this.sender = sender;

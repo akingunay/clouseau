@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 // TODO can we have a generic functional indexer and extractor
@@ -23,6 +24,8 @@ class Specification {
     private final Map<String, Set<String>> eventNameToControllerRoles;
     private final Map<String, Set<String>> attributeToDeterminant;		// the keys that determine this attribute
     private final Map<String, List<String>> eventNameToCommitmentNames; // the commitments that include the event
+    private final Map<String, List<String>> paramterToEventNames; 		// the events in which the parameter is controlled
+    
     
     Specification(final String name, final List<Commitment> commitments, final List<Event> events, final List<Control> controls) {
         this.name = name;
@@ -35,6 +38,7 @@ class Specification {
         this.eventNameToControllerRoles = indexEventNameToControllerRoles();
         this.attributeToDeterminant = extractAttributeToDeterminant();
         this.eventNameToCommitmentNames = indexEventNameToCommitmentNames();
+        this.paramterToEventNames = indexParameterToEventNames();
     }
 
     private Set<String> extractRoles() {
@@ -107,6 +111,19 @@ class Specification {
     	return index;
     }
     
+    private Map<String, List<String>> indexParameterToEventNames() {
+    	Map<String, List<String>> index = new HashMap<>();
+    	for (Control control : controls) {
+    		for (String parameter : control.getParameters()) {
+    			if (!index.containsKey(parameter)) {
+    				index.put(parameter, new ArrayList<>());
+    			}
+    			index.get(parameter).add(control.getEventName());
+    		}
+    	}
+    	return index;
+    }
+    
     String getName() {
     	return name;
     }
@@ -119,16 +136,38 @@ class Specification {
     	return Collections.unmodifiableList(commitments);
     }
     
+    /**
+     * Returns the events in which the given parameter is controlled by a role.
+     * 
+     * @param parameter
+     * @return
+     */
+    List<String> getControllingEvents(String parameter) {
+    	if (paramterToEventNames.containsKey(parameter)) {
+    		return Collections.unmodifiableList(paramterToEventNames.get(parameter));
+    	} else {
+    		throw new NoSuchElementException("There is no parameter '" + parameter + "' controlled by any event.");
+    	}
+    }
+    
     Set<String> getRoles() {
     	return Collections.unmodifiableSet(roles);
     }
     
     Set<String> getControllerRoles(String eventName) {
-    	return Collections.unmodifiableSet(eventNameToControllerRoles.getOrDefault(eventName, new HashSet<>()));
+    	if (eventNameToControllerRoles.containsKey(eventName)) {
+    		return Collections.unmodifiableSet(eventNameToControllerRoles.getOrDefault(eventName, new HashSet<>()));
+    	} else {
+    		throw new NoSuchElementException("There is no event '" + eventName + "' controlled by any role.");
+    	}
     }
     
     Set<String> getDeterminant(String attribute) {
-    	return Collections.unmodifiableSet(attributeToDeterminant.get(attribute));
+    	if (attributeToDeterminant.containsKey(attribute)) {
+    		return Collections.unmodifiableSet(attributeToDeterminant.get(attribute));
+    	} else {
+    		throw new NoSuchElementException();
+    	}
     }
     
     boolean isAttributeControlledByRoleForEvent(String attribute, String role, String eventName) {

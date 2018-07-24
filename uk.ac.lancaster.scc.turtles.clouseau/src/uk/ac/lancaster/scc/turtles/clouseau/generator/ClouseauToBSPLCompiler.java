@@ -88,7 +88,7 @@ class ClouseauToBSPLCompiler {
 		}
 		Set<String> exceptParameters = new HashSet<>();
 		for (String eventName : eventConfiguration.getExceptionEvents()) {
-			for (String parameter :specification.getEventWithName(eventName).getAttributes()) {	
+			for (String parameter : specification.getEventWithName(eventName).getAttributes()) {	
 				if (!knownParameters.contains(parameter)) {
 					exceptParameters.add(parameter);
 				}
@@ -112,7 +112,36 @@ class ClouseauToBSPLCompiler {
 			}
 			protocol.addMessages(messages);
 		}
-		return protocol;
+		return removeDeadMessages(protocol);
 	}
 
+	private Protocol removeDeadMessages(Protocol protocol) {
+		Protocol clearedProtocol = new Protocol(protocol.getName());
+		for (String role : protocol.getRoles()) {
+			clearedProtocol.addRole(role);
+		}
+		for (Message message : protocol.getMessages()) {
+			if (!isDeadMessage(message)) {
+				clearedProtocol.addMessage(message);
+			}
+		}
+		return clearedProtocol;
+	}
+	
+	private boolean isDeadMessage(Message message) {
+		// TODO refactor the following logic to extract event name "e" from the corresponding message name "eM"
+		// TODO we should find a concise way to relate event names with messages instead of using "M" suffix explicitly
+		String eventName = message.getName().substring(0, message.getName().length() - 1);
+		for (String parameter : specification.getEventWithName(eventName).getAttributes()) {
+			// TODO for efficiency specification should have a hash based method to check if a parameter is controlled in an event
+			List<String> controllingEventNames = specification.getControllingEvents(parameter);
+			// if this parameter is adorned in and there is no other event where it is controlled
+			// then this is a dead message, since the parameter cannot be bound in any message other than this
+			// TODO add is[in|out|nil]Parameter() methods to Message
+			if (message.getInParameters().contains(parameter) && controllingEventNames.size() == 1 && controllingEventNames.contains(eventName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
