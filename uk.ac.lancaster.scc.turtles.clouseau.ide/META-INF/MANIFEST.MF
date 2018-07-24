@@ -12,4 +12,5 @@ Require-Bundle: uk.ac.lancaster.scc.turtles.clouseau,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: uk.ac.lancaster.scc.turtles.clouseau.ide.contentassist.antlr.internal,
  uk.ac.lancaster.scc.turtles.clouseau.ide.contentassist.antlr
+Automatic-Module-Name: uk.ac.lancaster.scc.turtles.clouseau.ide
 
