@@ -4,23 +4,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-class ClouseauToBSPLCompiler {
+public class ClouseauToBSPLCompiler {
 
 	private final Specification specification;
 	private final MessageCompiler messageCompiler;
 	
-	ClouseauToBSPLCompiler(final Specification specification) {
+	public ClouseauToBSPLCompiler(final Specification specification) {
 		this.specification = specification;
 		this.messageCompiler = new MessageCompiler(specification);
 	}
 
-	Protocol compile() {
+	public Protocol compile() {
 		IntermediaryProtocol intermediaryProtocol = compileIntermediaryProtocol();
 		Protocol finalProtocol = linkIntermediaryProtocol(intermediaryProtocol);
 		return finalProtocol;
 	}
 	
-	IntermediaryProtocol compileIntermediaryProtocol() {
+	public IntermediaryProtocol compileIntermediaryProtocol() {
 		IntermediaryProtocol protocol = new IntermediaryProtocol(specification.getName(), specification.getRoles());
 		for (Commitment commitment : specification.getCommitments()) {
 			Set<Enactment> enactments = new HashSet<>();
@@ -39,14 +39,14 @@ class ClouseauToBSPLCompiler {
 	private Set<Enactment> compileEnactments(final Expression expression, final Set<Enactment> enactments, final String defaultSender, final String defaultReceiver) {
 		Set<Enactment> extendedEnactments = new HashSet<>();
 		for (Enactment enactment : enactments) {
-			for (EventConfiguration eventConfiguration : expression.getSatisfyingEventConfigurations()) {
+			for (Configuration eventConfiguration : expression.getSatisfyingConfigurations()) {
 				extendedEnactments.addAll(extendEnactment(enactment, eventConfiguration, compileMessages(enactment, eventConfiguration, defaultSender, defaultReceiver)));
 			}
 		}
 		return extendedEnactments;
 	}
 	
-	private Set<Set<Message>> compileMessages(final Enactment enactment, final EventConfiguration eventConfiguration, final String defaultSender, final String defaultReceiver) {
+	private Set<Set<Message>> compileMessages(final Enactment enactment, final Configuration eventConfiguration, final String defaultSender, final String defaultReceiver) {
 		Set<Set<Message>> messageSets = new HashSet<>();
 		messageSets.add(new HashSet<>());
 		for (String eventName : eventConfiguration.getNecessaryEvents()) {
@@ -70,7 +70,7 @@ class ClouseauToBSPLCompiler {
 		return extendedMessageSets;
 	}
 	
-	private Set<Enactment> extendEnactment(final Enactment enactment, final EventConfiguration eventConfiguration, final Set<Set<Message>> messageSets) {
+	private Set<Enactment> extendEnactment(final Enactment enactment, final Configuration eventConfiguration, final Set<Set<Message>> messageSets) {
 		Set<Enactment> extendedEnactments = new HashSet<>();
 		for (Set<Message> messageSet : messageSets) {
 			// Note that the extractExceptParameters likely to return parameter names that are known
@@ -81,7 +81,7 @@ class ClouseauToBSPLCompiler {
 	}	
 	
 	// This method creates a set of parameter names simply composing all the parameters of all exception events.
-	private Set<String> extractExceptParameters(EventConfiguration eventConfiguration) {
+	private Set<String> extractExceptParameters(Configuration eventConfiguration) {
 		Set<String> knownParameters = new HashSet<>();
 		for (String eventName : eventConfiguration.getNecessaryEvents()) {
 			knownParameters.addAll(specification.getEventWithName(eventName).getAttributes());
@@ -97,7 +97,7 @@ class ClouseauToBSPLCompiler {
 		return exceptParameters;
 	}
 
-	Protocol linkIntermediaryProtocol(IntermediaryProtocol intermediaryProtocol) {
+	public Protocol linkIntermediaryProtocol(IntermediaryProtocol intermediaryProtocol) {
 		Protocol protocol = new Protocol(intermediaryProtocol.getName());
 		for (String role : intermediaryProtocol.getRoles()) {
 			protocol.addRole(role);

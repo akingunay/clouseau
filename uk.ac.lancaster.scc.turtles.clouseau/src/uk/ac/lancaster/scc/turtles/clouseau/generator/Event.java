@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  * @author Akin Gunay
  *
  */
-class Event {
+public class Event {
 
     private final String name;
     private final Set<String> attributes;
@@ -24,7 +24,7 @@ class Event {
      * @param attributes
      * @param keys
      */
-    Event(final String name, final Set<Attribute> attributes, final Set<String> keys) {
+    public Event(final String name, final Set<Attribute> attributes, final Set<String> keys) {
 		this.name = name;
 		this.attributes = new HashSet<String>(attributes.stream().
 				map(a -> a.getName()).
@@ -40,7 +40,7 @@ class Event {
      * 
      * @return
      */
-    String getName() {
+    public String getName() {
 		return name;
 	}
 
@@ -48,7 +48,7 @@ class Event {
      * 
      * @return
      */
-	Set<String> getAttributes() {
+    public Set<String> getAttributes() {
 		return Collections.unmodifiableSet(attributes);
 	}
 
@@ -56,7 +56,7 @@ class Event {
 	 * 
 	 * @return
 	 */
-	Set<String> getKeys() {
+    public Set<String> getKeys() {
 		return Collections.unmodifiableSet(keys);
 	}
 
@@ -67,7 +67,7 @@ class Event {
 	 * @return list of attributes, where keys appear first (in any order)
 	 * and non-keys appear last (in any order)
 	 */
-	List<String> getAttributesWithKeysFirst() {
+    public List<String> getAttributesWithKeysFirst() {
 		List<String> attributesWithKeysFrist = new ArrayList<>(keys);
 		attributesWithKeysFrist.addAll(getNonkeyAttributes());
 		return attributesWithKeysFrist;
@@ -78,7 +78,7 @@ class Event {
 	 * 
 	 * @return non-key attributes
 	 */
-	Set<String> getNonkeyAttributes() {
+    public Set<String> getNonkeyAttributes() {
 		Set<String> nonkeyAttributes = new HashSet<>(attributes);
 		nonkeyAttributes.removeAll(keys);
 		return nonkeyAttributes;
@@ -89,7 +89,7 @@ class Event {
 	 * @param attribute
 	 * @return
 	 */
-	boolean isAttribute(final String attribute) {
+    public boolean isAttribute(final String attribute) {
         return attributes.contains(attribute);
     }
     
@@ -98,11 +98,11 @@ class Event {
 	 * @param key
 	 * @return
 	 */
-    boolean isKey(final String key) {
+    public boolean isKey(final String key) {
         return keys.contains(key);
     }
     
-    boolean isNillable(final String attribute) {
+    public boolean isNillable(final String attribute) {
     	return nillables.contains(attribute);
     }
     

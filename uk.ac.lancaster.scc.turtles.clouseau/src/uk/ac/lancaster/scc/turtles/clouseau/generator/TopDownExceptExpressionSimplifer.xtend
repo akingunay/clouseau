@@ -5,7 +5,7 @@ import uk.ac.lancaster.scc.turtles.clouseau.generator.ExceptExpressionSimplifier
 class TopDownExceptExpressionSimplifer implements ExceptExpressionSimplifier {
 	
 	override Expression simplify(Expression expression) {
-		if (expression instanceof BaseEvent) {
+		if (expression instanceof EventExpression) {
 			expression
 		} else if (expression instanceof OrExpression) {
 			new OrExpression(simplify(expression.left), simplify(expression.right))

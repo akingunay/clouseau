@@ -8,7 +8,7 @@ import java.util.Set;
  * @author Akin Gunay
  *
  */
-class Control {
+public class Control {
 
 	private final String role;
 	private final String eventName;
@@ -20,7 +20,7 @@ class Control {
 	 * @param eventName
 	 * @param parameters
 	 */
-	Control(final String role, final String eventName, final Set<String> parameters) {
+	public Control(final String role, final String eventName, final Set<String> parameters) {
 		super();
 		this.role = role;
 		this.eventName = eventName;
@@ -31,7 +31,7 @@ class Control {
 	 * 
 	 * @return
 	 */
-	String getRole() {
+	public String getRole() {
 		return role;
 	}
 
@@ -39,7 +39,7 @@ class Control {
 	 * 
 	 * @return
 	 */
-	String getEventName() {
+	public String getEventName() {
 		return eventName;
 	}
 
@@ -47,7 +47,7 @@ class Control {
 	 * 
 	 * @return
 	 */
-	Set<String> getParameters() {
+	public Set<String> getParameters() {
 		return Collections.unmodifiableSet(parameters);
 	}
 	

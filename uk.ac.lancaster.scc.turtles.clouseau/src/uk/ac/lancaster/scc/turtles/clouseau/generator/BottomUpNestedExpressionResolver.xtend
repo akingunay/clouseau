@@ -21,7 +21,7 @@ package class BottomUpNestedExpressionResolver implements NestedExpressionResolv
 	
 	override Expression resolve(CLOExpression expression) {
 		if (expression instanceof CLOBaseEvent) {
-			new BaseEvent(expression.event.name)
+			new EventExpression(expression.event.name)
 		} else if (expression instanceof CLOCreated) {
 			resolve(findRefferedExpression(expression.commitment.name, [CLOCommitment c | c.create]))
 		} else if (expression instanceof CLODetached) {

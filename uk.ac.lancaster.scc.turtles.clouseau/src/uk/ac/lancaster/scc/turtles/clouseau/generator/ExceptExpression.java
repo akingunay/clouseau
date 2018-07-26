@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-class ExceptExpression implements BinaryExpression {
+public class ExceptExpression implements BinaryExpression {
 
 	private final Expression left;
 	private final Expression right;
 	
-	ExceptExpression(final Expression left, final Expression right) {
+	public ExceptExpression(final Expression left, final Expression right) {
 		this.left = left;
 		this.right = right;
 	}
@@ -34,31 +34,32 @@ class ExceptExpression implements BinaryExpression {
 	// of except expression is done during parsing, this assumption must
 	// hold.
 	@Override
-	public Set<EventConfiguration> getSatisfyingEventConfigurations() {
-		if (!(right instanceof BaseEvent)) {
-			throw new IllegalStateException("Computation of satisfying configurations requires all except expression to be fully simplified.");
-		}
-		Set<EventConfiguration> leftEventConfigurations = left.getSatisfyingEventConfigurations();
-		Set<EventConfiguration> rightEventConfigurations = right.getSatisfyingEventConfigurations();
-		Set<EventConfiguration> satisfyingEventConfigurations = new HashSet<>();
-		for (EventConfiguration leftEventConfiguration : leftEventConfigurations) {
-			for (EventConfiguration rightEventConfiguration : rightEventConfigurations) {
-				// Since the right expression is assumed to be a base event, we always receive a
-				// configuration of the form ({e}, {}) from the right. We should interpret this
-				// configuration to capture the exception event.  Hence, we use 
-				// exceptionEvents and necessaryEvents in reverse order when we extend
-				// the configuration that we received from left.
-				satisfyingEventConfigurations.add(leftEventConfiguration.extend(rightEventConfiguration.getExceptionEvents(), rightEventConfiguration.getNecessaryEvents()));
-			}
-		}
-		return satisfyingEventConfigurations;
+	public List<Configuration> getSatisfyingConfigurations() {
+//		if (!(right instanceof EventExpression)) {
+//			throw new IllegalStateException("Computation of satisfying configurations requires all except expression to be fully simplified.");
+//		}
+//		Set<Configuration> leftEventConfigurations = left.getSatisfyingConfigurations();
+//		Set<Configuration> rightEventConfigurations = right.getSatisfyingConfigurations();
+//		Set<Configuration> satisfyingEventConfigurations = new HashSet<>();
+//		for (Configuration leftEventConfiguration : leftEventConfigurations) {
+//			for (Configuration rightEventConfiguration : rightEventConfigurations) {
+//				// Since the right expression is assumed to be a base event, we always receive a
+//				// configuration of the form ({e}, {}) from the right. We should interpret this
+//				// configuration to capture the exception event.  Hence, we use 
+//				// exceptionEvents and necessaryEvents in reverse order when we extend
+//				// the configuration that we received from left.
+//				satisfyingEventConfigurations.add(leftEventConfiguration.extend(rightEventConfiguration.getExceptionEvents(), rightEventConfiguration.getNecessaryEvents()));
+//			}
+//		}
+//		return satisfyingEventConfigurations;
+		return null;
 	}
 	
 	@Override
-	public List<String> getIncludedEventNames() {
+	public List<String> getEventNames() {
 		Set<String> includedEventNames = new HashSet<>();
-		includedEventNames.addAll(left.getIncludedEventNames());
-		includedEventNames.addAll(right.getIncludedEventNames());
+		includedEventNames.addAll(left.getEventNames());
+		includedEventNames.addAll(right.getEventNames());
 		return new ArrayList<>(includedEventNames);
 	}
 	

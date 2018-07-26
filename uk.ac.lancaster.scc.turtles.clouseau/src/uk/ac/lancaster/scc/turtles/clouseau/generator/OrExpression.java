@@ -20,6 +20,9 @@ class OrExpression implements BinaryExpression {
 	private final Expression right;
 	
 	OrExpression(final Expression left, final Expression right) {
+		if (left == null || right == null) {
+			throw new NullPointerException();
+		}
 		this.left = left;
 		this.right = right;
 	}
@@ -35,42 +38,45 @@ class OrExpression implements BinaryExpression {
 	}
 	
 	@Override
-	public Set<EventConfiguration> getSatisfyingEventConfigurations() {
-		Set<EventConfiguration> leftEventConfigurations = left.getSatisfyingEventConfigurations();
-		Set<EventConfiguration> rightEventConfigurations = right.getSatisfyingEventConfigurations();
-		Set<EventConfiguration> satisfyingEventConfigurations = new HashSet<>();
-		for (EventConfiguration leftEventConfiguration : leftEventConfigurations) {
-			for (EventConfiguration rightEventConfiguration : rightEventConfigurations) {
-				satisfyingEventConfigurations.add(leftEventConfiguration.extend(rightEventConfiguration.getNecessaryEvents(), rightEventConfiguration.getExceptionEvents()));
+	public List<Configuration> getSatisfyingConfigurations() {
+		List<Configuration> leftConfigurations = left.getSatisfyingConfigurations();
+		List<Configuration> rightConfigurations = right.getSatisfyingConfigurations();
+		List<Configuration> satisfyingConfigurations = new ArrayList<>();
+		for (Configuration leftConfiguration : leftConfigurations) {
+			for (Configuration rightConfiguration : rightConfigurations) {
+				satisfyingConfigurations.add(leftConfiguration.extend(
+						rightConfiguration.getNecessaryEvents(), 
+						rightConfiguration.getExceptionEvents()));
 			}
 		}
-		Set<String> allExceptionEventNamesOfRight = extractAllExceptionEventNames(rightEventConfigurations);
-		for (EventConfiguration leftEventConfiguration : leftEventConfigurations) {
-			satisfyingEventConfigurations.add(leftEventConfiguration.extend(new HashSet<>(), allExceptionEventNamesOfRight));
-			satisfyingEventConfigurations.add(leftEventConfiguration.extend(allExceptionEventNamesOfRight, new HashSet<>()));
+		Set<String> allExceptionEventNamesOfRight = extractAllExceptionEventNames(rightConfigurations);
+		for (Configuration leftConfiguration : leftConfigurations) {
+			satisfyingConfigurations.add(leftConfiguration.extend(new ArrayList<>(0), allExceptionEventNamesOfRight));
+			satisfyingConfigurations.add(leftConfiguration.extend(allExceptionEventNamesOfRight, new ArrayList<>(0)));
 		}
-
-		Set<String> allExceptionEventNamesOfLeft = extractAllExceptionEventNames(leftEventConfigurations);
-		for (EventConfiguration rightEventConfiguration : rightEventConfigurations) {
-			satisfyingEventConfigurations.add(rightEventConfiguration.extend(new HashSet<>(), allExceptionEventNamesOfLeft));
-			satisfyingEventConfigurations.add(rightEventConfiguration.extend(allExceptionEventNamesOfLeft, new HashSet<>()));
-		}
-		return satisfyingEventConfigurations;
+//
+//		Set<String> allExceptionEventNamesOfLeft = extractAllExceptionEventNames(leftEventConfigurations);
+//		for (Configuration rightEventConfiguration : rightEventConfigurations) {
+//			satisfyingEventConfigurations.add(rightEventConfiguration.extend(new HashSet<>(), allExceptionEventNamesOfLeft));
+//			satisfyingEventConfigurations.add(rightEventConfiguration.extend(allExceptionEventNamesOfLeft, new HashSet<>()));
+//		}
+//		return satisfyingEventConfigurations;
+		return null;
 	}
 	
-	private Set<String> extractAllExceptionEventNames(Set<EventConfiguration> eventConfigurations) {
+	private Set<String> extractAllExceptionEventNames(List<Configuration> eventConfigurations) {
 		Set<String> exceptionEventNames = new HashSet<>();
-		for (EventConfiguration eventConfiguration : eventConfigurations) {
+		for (Configuration eventConfiguration : eventConfigurations) {
 			exceptionEventNames.addAll(eventConfiguration.getExceptionEvents());
 		}
 		return exceptionEventNames;
 	}
 	
 	@Override
-	public List<String> getIncludedEventNames() {
+	public List<String> getEventNames() {
 		Set<String> includedEventNames = new HashSet<>();
-		includedEventNames.addAll(left.getIncludedEventNames());
-		includedEventNames.addAll(right.getIncludedEventNames());
+		includedEventNames.addAll(left.getEventNames());
+		includedEventNames.addAll(right.getEventNames());
 		return new ArrayList<>(includedEventNames);
 	}
 	

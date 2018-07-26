@@ -11,7 +11,7 @@ import java.util.Set;
  * @author Akin Gunay
  *
  */
-class Commitment {
+public class Commitment {
 
 	private final String name;
 	private final String debtor;
@@ -31,7 +31,7 @@ class Commitment {
 	 * @param detach
 	 * @param discharge
 	 */
-	Commitment(final String name, final String debtor, final String creditor, final Expression create, final Expression detach, final Expression discharge) {
+	public Commitment(final String name, final String debtor, final String creditor, final Expression create, final Expression detach, final Expression discharge) {
 		super();
 		this.name = name;
 		this.debtor = debtor;
@@ -48,7 +48,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	String getName() {
+	public String getName() {
 		return name;
 	}
 
@@ -56,7 +56,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	String getDebtor() {
+	public String getDebtor() {
 		return debtor;
 	}
 
@@ -64,7 +64,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	String getCreditor() {
+	public String getCreditor() {
 		return creditor;
 	}
 
@@ -72,7 +72,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	Set<String> getRoles() {
+	public Set<String> getRoles() {
 		return Collections.unmodifiableSet(roles);
 	}
 	
@@ -80,7 +80,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	Expression getCreate() {
+	public Expression getCreate() {
 		return create;
 	}
 
@@ -88,7 +88,7 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	Expression getDetach() {
+	public Expression getDetach() {
 		return detach;
 	}
 
@@ -96,15 +96,15 @@ class Commitment {
 	 * 
 	 * @return
 	 */
-	Expression getDischarge() {
+	public Expression getDischarge() {
 		return discharge;
 	}
 	
-	List<String> getIncludedEventNames() {
+	public List<String> getIncludedEventNames() {
 		Set<String> includedEventNames = new HashSet<>();
-		includedEventNames.addAll(create.getIncludedEventNames());
-		includedEventNames.addAll(detach.getIncludedEventNames());
-		includedEventNames.addAll(discharge.getIncludedEventNames());
+		includedEventNames.addAll(create.getEventNames());
+		includedEventNames.addAll(detach.getEventNames());
+		includedEventNames.addAll(discharge.getEventNames());
 		return new ArrayList<>(includedEventNames);
 	}
 	

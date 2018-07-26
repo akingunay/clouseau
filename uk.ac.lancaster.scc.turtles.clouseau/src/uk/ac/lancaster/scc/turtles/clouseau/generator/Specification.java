@@ -24,7 +24,7 @@ class Specification {
     private final Map<String, Set<String>> eventNameToControllerRoles;
     private final Map<String, Set<String>> attributeToDeterminant;		// the keys that determine this attribute
     private final Map<String, List<String>> eventNameToCommitmentNames; // the commitments that include the event
-    private final Map<String, List<String>> paramterToEventNames; 		// the events in which the parameter is controlled
+    private final Map<String, List<String>> parameterToEventNames; 		// the events in which the parameter is controlled
     
     
     Specification(final String name, final List<Commitment> commitments, final List<Event> events, final List<Control> controls) {
@@ -38,7 +38,7 @@ class Specification {
         this.eventNameToControllerRoles = indexEventNameToControllerRoles();
         this.attributeToDeterminant = extractAttributeToDeterminant();
         this.eventNameToCommitmentNames = indexEventNameToCommitmentNames();
-        this.paramterToEventNames = indexParameterToEventNames();
+        this.parameterToEventNames = indexParameterToEventNames();
     }
 
     private Set<String> extractRoles() {
@@ -143,8 +143,8 @@ class Specification {
      * @return
      */
     List<String> getControllingEvents(String parameter) {
-    	if (paramterToEventNames.containsKey(parameter)) {
-    		return Collections.unmodifiableList(paramterToEventNames.get(parameter));
+    	if (parameterToEventNames.containsKey(parameter)) {
+    		return Collections.unmodifiableList(parameterToEventNames.get(parameter));
     	} else {
     		throw new NoSuchElementException("There is no parameter '" + parameter + "' controlled by any event.");
     	}

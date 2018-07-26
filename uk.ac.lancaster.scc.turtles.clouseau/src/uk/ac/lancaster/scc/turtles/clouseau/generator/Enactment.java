@@ -6,13 +6,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-class Enactment {
+// TODO perhaps we should rename this to BSPLEnactment
+public class Enactment {
 
     private final Set<Message> messages;
     private final Map<String, Set<String>> agentToBoundParameters;
     private final Set<String> exceptParameters;
     
-    Enactment() {
+    public Enactment() {
     	this.messages = new HashSet<>();
     	this.agentToBoundParameters = new HashMap<>();
     	this.exceptParameters = new HashSet<>();
@@ -24,7 +25,7 @@ class Enactment {
     // the set of known parameters. This is necessary since the enactment does not
     // know which messages capture exceptions. Therefore we should respect to 
     // the given content of the expect parameters. 
-    Enactment(final Set<Message> messages, final Set<String> exceptParameters) {
+    public Enactment(final Set<Message> messages, final Set<String> exceptParameters) {
         this.messages = new HashSet<>(messages);
         this.agentToBoundParameters = indexAgentsToBoundParameters();
         this.exceptParameters = new HashSet<>(exceptParameters);
@@ -57,20 +58,20 @@ class Enactment {
 		}
     }
     
-    Set<Message> getMessages() {
+    public Set<Message> getMessages() {
         return Collections.unmodifiableSet(messages);
     }
     
-    Set<String> getBoundParameters(String role) {
+    public Set<String> getBoundParameters(String role) {
         return Collections.unmodifiableSet(agentToBoundParameters.getOrDefault(role, new HashSet<String>()));
     }
  
-    Set<String> getExceptParameters() {
+    public Set<String> getExceptParameters() {
         return Collections.unmodifiableSet(exceptParameters);
     }
 
     // Check the note at the corresponding constructor.
-    Enactment extend(final Set<Message> messages, final Set<String> exceptParameters) {
+    public Enactment extend(final Set<Message> messages, final Set<String> exceptParameters) {
     	Set<Message> extendedMessages = new HashSet<>(this.messages);
     	extendedMessages.addAll(messages);
     	Set<String> extendedExceptParameters = new HashSet<>(this.exceptParameters);
