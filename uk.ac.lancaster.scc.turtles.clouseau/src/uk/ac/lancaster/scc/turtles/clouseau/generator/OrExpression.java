@@ -54,14 +54,13 @@ class OrExpression implements BinaryExpression {
 			satisfyingConfigurations.add(leftConfiguration.extend(new ArrayList<>(0), allExceptionEventNamesOfRight));
 			satisfyingConfigurations.add(leftConfiguration.extend(allExceptionEventNamesOfRight, new ArrayList<>(0)));
 		}
-//
-//		Set<String> allExceptionEventNamesOfLeft = extractAllExceptionEventNames(leftEventConfigurations);
-//		for (Configuration rightEventConfiguration : rightEventConfigurations) {
-//			satisfyingEventConfigurations.add(rightEventConfiguration.extend(new HashSet<>(), allExceptionEventNamesOfLeft));
-//			satisfyingEventConfigurations.add(rightEventConfiguration.extend(allExceptionEventNamesOfLeft, new HashSet<>()));
-//		}
-//		return satisfyingEventConfigurations;
-		return null;
+
+		Set<String> allExceptionEventNamesOfLeft = extractAllExceptionEventNames(leftConfigurations);
+		for (Configuration rightConfiguration : rightConfigurations) {
+			satisfyingConfigurations.add(rightConfiguration.extend(new HashSet<>(), allExceptionEventNamesOfLeft));
+			satisfyingConfigurations.add(rightConfiguration.extend(allExceptionEventNamesOfLeft, new HashSet<>()));
+		}
+		return satisfyingConfigurations;
 	}
 	
 	private Set<String> extractAllExceptionEventNames(List<Configuration> eventConfigurations) {

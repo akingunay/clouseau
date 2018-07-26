@@ -33,3 +33,8 @@ class ClouseauGenerator extends AbstractGenerator {
 		fsa.generateFile(resource.URI.lastSegment.split("\\.").get(0) + ".bspl", printer.toCharSequence)
 	}
 }
+
+// Input validation
+// ? can event and parameter names overlap
+// ! names that start with underscore are reserved for internally generated names
+// ? what happens when an event is controlled by multiple roles

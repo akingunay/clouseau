@@ -64,12 +64,33 @@ class IntermediaryProtocol {
     	return messages;
     }
     
+    /**
+     * 
+     * 
+     * @param messageName
+     * @param commitmentName
+     * @return
+     */
     List<Message> getMessages(String messageName, String commitmentName) {
     	List<Message> messages = new ArrayList<>();
     	for (Enactment enactment : commitmentNameToEnactments.get(commitmentName)) {
     		for (Message message : enactment.getMessages()) {
     			if (message.getName().equals(messageName + "M")) {
     				messages.add(message);
+    			}
+    		}
+    	}
+    	return messages;
+    }
+    
+    List<Message> getMessages(String messageName) {
+    	List<Message> messages = new ArrayList<>();
+    	for (String commitmentName : commitmentNameToEnactments.keySet()) {
+    		for (Enactment enactment : commitmentNameToEnactments.get(commitmentName)) {
+    			for (Message message : enactment.getMessages()) {
+    				if (message.getName().equals(messageName)) {
+    					messages.add(message);
+    				}
     			}
     		}
     	}

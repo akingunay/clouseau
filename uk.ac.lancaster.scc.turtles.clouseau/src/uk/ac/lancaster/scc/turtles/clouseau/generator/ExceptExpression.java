@@ -35,24 +35,23 @@ public class ExceptExpression implements BinaryExpression {
 	// hold.
 	@Override
 	public List<Configuration> getSatisfyingConfigurations() {
-//		if (!(right instanceof EventExpression)) {
-//			throw new IllegalStateException("Computation of satisfying configurations requires all except expression to be fully simplified.");
-//		}
-//		Set<Configuration> leftEventConfigurations = left.getSatisfyingConfigurations();
-//		Set<Configuration> rightEventConfigurations = right.getSatisfyingConfigurations();
-//		Set<Configuration> satisfyingEventConfigurations = new HashSet<>();
-//		for (Configuration leftEventConfiguration : leftEventConfigurations) {
-//			for (Configuration rightEventConfiguration : rightEventConfigurations) {
-//				// Since the right expression is assumed to be a base event, we always receive a
-//				// configuration of the form ({e}, {}) from the right. We should interpret this
-//				// configuration to capture the exception event.  Hence, we use 
-//				// exceptionEvents and necessaryEvents in reverse order when we extend
-//				// the configuration that we received from left.
-//				satisfyingEventConfigurations.add(leftEventConfiguration.extend(rightEventConfiguration.getExceptionEvents(), rightEventConfiguration.getNecessaryEvents()));
-//			}
-//		}
-//		return satisfyingEventConfigurations;
-		return null;
+		if (!(right instanceof EventExpression)) {
+			throw new IllegalStateException("Computation of satisfying configurations requires all except expression to be fully simplified.");
+		}
+		List<Configuration> leftConfigurations = left.getSatisfyingConfigurations();
+		List<Configuration> rightConfigurations = right.getSatisfyingConfigurations();
+		List<Configuration> satisfyingConfigurations = new ArrayList<>();
+		for (Configuration leftEventConfiguration : leftConfigurations) {
+			for (Configuration rightEventConfiguration : rightConfigurations) {
+				// Since the right expression is assumed to be a base event, we always receive a
+				// configuration of the form ({e}, {}) from the right. We should interpret this
+				// configuration to capture the exception event.  Hence, we use 
+				// exceptionEvents and necessaryEvents in reverse order when we extend
+				// the configuration that we received from left.
+				satisfyingConfigurations.add(leftEventConfiguration.extend(rightEventConfiguration.getExceptionEvents(), rightEventConfiguration.getNecessaryEvents()));
+			}
+		}
+		return satisfyingConfigurations;
 	}
 	
 	@Override

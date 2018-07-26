@@ -4,22 +4,41 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// TODO spearate compiler and linker
+
+/**
+ * 
+ * @author gunay
+ *
+ */
 public class ClouseauToBSPLCompiler {
 
 	private final Specification specification;
 	private final MessageCompiler messageCompiler;
 	
+	/**
+	 * 
+	 * @param specification
+	 */
 	public ClouseauToBSPLCompiler(final Specification specification) {
 		this.specification = specification;
 		this.messageCompiler = new MessageCompiler(specification);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Protocol compile() {
 		IntermediaryProtocol intermediaryProtocol = compileIntermediaryProtocol();
 		Protocol finalProtocol = linkIntermediaryProtocol(intermediaryProtocol);
 		return finalProtocol;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public IntermediaryProtocol compileIntermediaryProtocol() {
 		IntermediaryProtocol protocol = new IntermediaryProtocol(specification.getName(), specification.getRoles());
 		for (Commitment commitment : specification.getCommitments()) {
@@ -97,6 +116,11 @@ public class ClouseauToBSPLCompiler {
 		return exceptParameters;
 	}
 
+	/**
+	 * 
+	 * @param intermediaryProtocol
+	 * @return
+	 */
 	public Protocol linkIntermediaryProtocol(IntermediaryProtocol intermediaryProtocol) {
 		Protocol protocol = new Protocol(intermediaryProtocol.getName());
 		for (String role : intermediaryProtocol.getRoles()) {
@@ -104,17 +128,67 @@ public class ClouseauToBSPLCompiler {
 		}
 		for (String eventName : specification.getEventNames()) {
 			List<String> commitmentNames = specification.getCommitmentNames(eventName);
-			Set<Message> messages = new HashSet<>(intermediaryProtocol.getMessages(eventName, commitmentNames.get(0)));
+			// Some messages for an event may have "?" as receiver in the intermediary
+			// protocol, if roles of a commitment is not aligned with the event's controller
+			// (which is NOT an error!). We should resolve "?" receiver cases using the receiver
+			// information from other messages for the same event.
+			// TODO we should replace "?" notation with something consistent
+			String receiver = determineReceiver(intermediaryProtocol, eventName);
+			Set<Message> messages = new HashSet<>(resolveUnknownReceiver(intermediaryProtocol.getMessages(eventName, commitmentNames.get(0)), receiver));
 			if (1 < commitmentNames.size()) { 
 				for (int i = 1 ; i < commitmentNames.size() ; i++) {
-					messages.retainAll(intermediaryProtocol.getMessages(eventName, commitmentNames.get(i)));
+//					// TRACE BEGIN
+//					for (Message message : messages) {
+//						System.out.println(message);
+//					}
+//					System.out.println();
+//					for (Message message : intermediaryProtocol.getMessages(eventName, commitmentNames.get(i))) {
+//						System.out.println(message);
+//					}
+//					System.out.println("----");
+//					
+//					// TRACE END
+					messages.retainAll(resolveUnknownReceiver(intermediaryProtocol.getMessages(eventName, commitmentNames.get(i)), receiver));
 				}
 			}
 			protocol.addMessages(messages);
 		}
-		return removeDeadMessages(protocol);
+		return addAutonomyParameters(removeDeadMessages(protocol));
 	}
 
+	private String determineReceiver(IntermediaryProtocol intermediaryProtocol, String eventName) {
+		// TODO we should find a concise way to relate event names with messages instead of using "M" suffix explicitly
+		List<Message> messages = intermediaryProtocol.getMessages(eventName + "M");
+		for (Message message : messages) {
+			// TODO use of explicit "?"
+			if (!message.getReceiver().equals("?")) {
+				return message.getReceiver();
+			}
+		}
+		// TODO we should not reach to this point since there must at least one message with a properly set receiver
+		// FIXME we may reach this point if we have events that are not part of a commitment
+		throw new IllegalStateException();
+	}
+	
+	private Set<Message> resolveUnknownReceiver(List<Message> messages, String receiver) {
+		Set<Message> resolvedMessages = new HashSet<>();
+		for (Message message : messages) {
+			// TODO explicit use of "?"
+			if (message.getReceiver().equals("?")) {
+				resolvedMessages.add(new Message(
+						message.getName(), message.getSender(), receiver,
+						message.getKeyParameters(),
+						message.getInParameters(),
+						message.getOutParameters(),
+						message.getNilParameters(),
+						message.getUnknownParameters()));
+			} else {
+				resolvedMessages.add(message);
+			}
+		}
+		return resolvedMessages;
+	}
+	
 	private Protocol removeDeadMessages(Protocol protocol) {
 		Protocol clearedProtocol = new Protocol(protocol.getName());
 		for (String role : protocol.getRoles()) {
@@ -143,5 +217,24 @@ public class ClouseauToBSPLCompiler {
 			}
 		}
 		return false;
+	}
+	
+	private Protocol addAutonomyParameters(Protocol protocol) {
+		Protocol protocolWithAutonomyParameters = new Protocol(protocol.getName());
+		for (String role : protocol.getRoles()) {
+			protocolWithAutonomyParameters.addRole(role);
+		}
+		for (Message message : protocol.getMessages()) {
+			Set<String> extendedOutParameters = new HashSet<>(message.getOutParameters());
+			// TODO creation of compiler generated names must be done by a single class
+			extendedOutParameters.add("_" + message.getName());
+			protocolWithAutonomyParameters.addMessage(new Message(message.getName(), message.getSender(), message.getReceiver(),
+					message.getKeyParameters(),
+					message.getInParameters(),
+					extendedOutParameters, 
+					message.getNilParameters(),
+					message.getUnknownParameters()));
+		}
+		return protocolWithAutonomyParameters;
 	}
 }
