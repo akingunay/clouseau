@@ -1,5 +1,6 @@
 package uk.ac.lancaster.scc.turtles.clouseau.generator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -126,7 +127,7 @@ public class ClouseauToBSPLCompiler {
 		for (String role : intermediaryProtocol.getRoles()) {
 			protocol.addRole(role);
 		}
-		for (String eventName : specification.getEventNames()) {
+		for (String eventName : specification.getBoundEventNames()) {
 			List<String> commitmentNames = specification.getCommitmentNames(eventName);
 			// Some messages for an event may have "?" as receiver in the intermediary
 			// protocol, if roles of a commitment is not aligned with the event's controller
@@ -153,7 +154,7 @@ public class ClouseauToBSPLCompiler {
 			}
 			protocol.addMessages(messages);
 		}
-		return addAutonomyParameters(removeDeadMessages(protocol));
+		return addFreeEvents(addAutonomyParameters(removeDeadMessages(protocol)));
 	}
 
 	private String determineReceiver(IntermediaryProtocol intermediaryProtocol, String eventName) {
@@ -237,4 +238,40 @@ public class ClouseauToBSPLCompiler {
 		}
 		return protocolWithAutonomyParameters;
 	}
+	
+	private Protocol addFreeEvents(Protocol protocol) {
+		Protocol protocolWithFreeEvents = new Protocol(protocol.getName());
+		for (String role : protocol.getRoles()) {
+			protocolWithFreeEvents.addRole(role);
+		}
+		protocolWithFreeEvents.addMessages(protocol.getMessages());
+		for (String freeEventName : specification.getFreeEventNames()) {
+			protocolWithFreeEvents.addMessages(createFreeEventMessages(freeEventName));
+		}
+		return protocolWithFreeEvents;
+	}
+	
+	private List<Message> createFreeEventMessages(String freeEventName) {
+		List<Message> messages = new ArrayList<>();
+		Event event = specification.getEventWithName(freeEventName);
+		for (Control control : specification.getControls(freeEventName)) {
+			Set<String> inParameters = new HashSet<>();
+			Set<String> outParameters = new HashSet<>();
+			for (String attribute : event.getAttributes()) {
+				if (control.getParameters().contains(attribute)) {
+					outParameters.add(attribute);
+				} else {
+					inParameters.add(attribute);
+				}
+			}
+			for (String roleName : specification.getRoles()) {
+				if (!roleName.equals(control.getRole())) {
+					// TODO use of explicit "M"
+					messages.add(new Message(freeEventName + "M", control.getRole(), roleName, event.getKeys(), inParameters, outParameters, new HashSet<>(), new HashSet<>()));
+				}
+			}
+		}
+		return messages;
+	}
+	
 }

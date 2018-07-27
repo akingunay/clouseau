@@ -11,6 +11,7 @@ import java.util.Set;
 
 // TODO can we have a generic functional indexer and extractor
 // TODO methods that return set may return empty set instead of null, when the result is empty
+// TODO replace set with list when appropriate
 
 class Specification {
 
@@ -205,6 +206,30 @@ class Specification {
     		eventNames.add(event.getName());
     	}
     	return eventNames;
+    }
+    
+    List<String> getBoundEventNames() {
+    	List<String> boundEventNames = new ArrayList<>();
+    	for (String eventName : getEventNames()) {
+    		if (eventNameToCommitmentNames.containsKey(eventName)) {
+    			boundEventNames.add(eventName);
+    		}
+    	}
+    	return boundEventNames;
+    }
+    
+    List<String> getFreeEventNames() {
+    	List<String> freeEventNames = new ArrayList<>();
+    	for (String eventName : getEventNames()) {
+    		if (!eventNameToCommitmentNames.containsKey(eventName)) {
+    			freeEventNames.add(eventName);
+    		}
+    	}
+    	return freeEventNames;
+    }
+    
+    Set<Control> getControls(String eventName) {
+    	return eventNameToControls.getOrDefault(eventName, new HashSet<>());
     }
     
     @Override
